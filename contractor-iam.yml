@@ -15,10 +15,11 @@ Resources:
     Type: AWS::IAM::Group
     Properties:
       GroupName: Contractors
+      Path: /groups/
       ManagedPolicyArns: 
         - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
         - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
-        - arn:aws:iam::aws:policy/AmazonEKSReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
 
   ContractorUser:
     Type: AWS::IAM::User
@@ -26,7 +27,13 @@ Resources:
       UserName: !Ref UserName
       Path: /users/
       Groups:
-        - Contractors
+        - !Ref ContractorsGroup  # Correct reference to the group
+
+  UserLoginProfile:
+    Type: AWS::IAM::UserLoginProfile
+    Properties:
+      UserName: !Ref ContractorUser
+      PasswordResetRequired: true
 
 Outputs:
   GroupName:
@@ -35,3 +42,6 @@ Outputs:
   UserName:
     Description: 'Name of the created IAM user'
     Value: !Ref ContractorUser
+  LoginURL:
+    Description: 'URL for the new user to login'
+    Value: !Sub 'https://${AWS::AccountId}.signin.aws.amazon.com/console'
