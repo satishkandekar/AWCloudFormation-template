@@ -19,7 +19,7 @@ Resources:
       ManagedPolicyArns: 
         - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
         - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
-        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSReadOnlyAccess
 
   ContractorUser:
     Type: AWS::IAM::User
@@ -27,13 +27,9 @@ Resources:
       UserName: !Ref UserName
       Path: /users/
       Groups:
-        - !Ref ContractorsGroup  # Correct reference to the group
-
-  UserLoginProfile:
-    Type: AWS::IAM::UserLoginProfile
-    Properties:
-      UserName: !Ref ContractorUser
-      PasswordResetRequired: true
+        - Contractors 
+      LoginProfile:
+        PasswordResetRequired: true 
 
 Outputs:
   GroupName:
