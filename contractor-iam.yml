@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'IAM User for Contractors with EC2, S3, and EKS access'
+
+Parameters:
+  UserName:
+    Description: 'Name of the IAM user to create'
+    Type: String
+    MinLength: 1
+    MaxLength: 64
+    AllowedPattern: '[\w+=,.@-]+'
+    ConstraintDescription: 'Must be a valid IAM user name'
+
+Resources:
+  ContractorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: Contractors
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonEKSReadOnlyAccess
+
+  ContractorUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref UserName
+      Path: /users/
+      Groups:
+        - Contractors
+
+Outputs:
+  GroupName:
+    Description: 'Name of the Contractors group'
+    Value: !Ref ContractorsGroup
+  UserName:
+    Description: 'Name of the created IAM user'
+    Value: !Ref ContractorUser
